@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href ="style/style.css">
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <title>Login Form</title>
+    <style>
+      body {background-color: rgb(233, 233, 233);}
+      h1   {color: rgb(0, 0, 0);}
+      h2   {color: rgb(63, 63, 63);}
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <br><h1><strong>Simple Login and View System (to Mongo database)</strong></h1><br>
+      <h2>Login</h2>
+      <form id="loginform">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" name="name" id="name" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="password">password</label>
+          <input type="password" name="password" id="password" class="form-control" />
+        </div>
+        <div class="form-group">
+          <div
+            class="g-recaptcha"
+            data-sitekey="6LcpYfsjAAAAAJ_pewaVDxeSAItaL7ZRZFp8oiTd"
+          ></div>
+        </div>
+        <input type="submit" value="Submit" class="btn btn-primary" />
+      </form>
+    </div>
+
+    <script>
+      document.getElementById('loginform').addEventListener('submit', result => {
+        result.preventDefault();
+
+        const delaytime = 60000; // 1000 = 1 second 
+        const name = document.querySelector('#name').value;
+        const password = document.querySelector('#password').value;
+        const captcha = document.querySelector('#g-recaptcha-response').value;
+
+        return fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json' },
+          body: JSON.stringify({ name, password, captcha })
+        })
+          .then(res => res.json())
+          .then(data => {
+            alert(data.msg);
+            if(data.success == false)
+            {
+              location.reload();
+            }
+              else // show detail
+            {
+              document.write("This page will be exit in ", delaytime/1000, " seconds, You can manually exit by refreshing the page \n\n");
+              document.write("Copy the token below to check the detail of the user: \n", data.token);
+              setTimeout(function(){  //delay time
+                location.reload();    //reload page
+              }, delaytime);
+            }   
+          });
+      });
+    </script>
+  </body>
+
+  <body>
+    <div class="container">
+      <br>
+      <h2>View detail using token</h2>
+        <form id="viewform">
+          <div class="form-group">
+            <label for="token">Token</label>
+            <input type="text" name="token" id="token" class="form-control" />
+          </div>
+        <input type="submit" value="Submit" class="btn btn-primary" />
+    </div>
+  </body>  
+
+  <script>
+    document.getElementById('viewform').addEventListener('submit', result => {
+      result.preventDefault();
+
+      const token = document.querySelector('#token').value;
+      const delaytime = 60000; // 1000 = 1 second 
+      return fetch('/view', {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({token})
+      })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.msg);
+          if(data.success == false) 
+          {
+            location.reload();
+          }
+          else // show detail
+          {
+            document.write("This page will be exit in ", delaytime/1000, " seconds, You can manually exit by refreshing the page. ");
+            document.write("Detail of the user: \n", data.result);
+            setTimeout(function(){  //delay time
+              location.reload();    //reload page
+            }, delaytime); 
+          }       
+        });
+    });
+  </script>
+  
+</html>
