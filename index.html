@@ -38,7 +38,7 @@
       document.getElementById('loginform').addEventListener('submit', result => {
         result.preventDefault();
 
-        const delaytime = 60000; // 1000 = 1 second 
+        const delaytime = 1*60*1000; // 1000 = 1 second 
         const name = document.querySelector('#name').value;
         const password = document.querySelector('#password').value;
         const captcha = document.querySelector('#g-recaptcha-response').value;
@@ -86,7 +86,7 @@
       result.preventDefault();
 
       const token = document.querySelector('#token').value;
-      const delaytime = 60000; // 1000 = 1 second 
+      const delaytime = 1*60*1000; // 1000 = 1 second
       return fetch('/view', {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
